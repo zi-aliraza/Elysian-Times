@@ -11,3 +11,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* --- Custom Font Definitions --- */
+
+@font-face {
+  font-family: 'Hello Paris';
+  src: url('./assets/fonts/HelloParis.ttf') format('truetype');
+  /* Ensure the filename matches what you have */
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Selima';
+  src: url('./assets/fonts/Selima.ttf') format('truetype');
+  /* Ensure the filename matches what you have */
+  font-weight: normal;
+  font-style: normal;
+}
