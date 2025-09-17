@@ -1,18 +1,19 @@
 {
   "files": {
-    "main.js": "/Elysian-Times/static/js/main.e06a9d04.js",
+    "main.js": "/Elysian-Times/static/js/main.b0939166.js",
     "static/js/453.050ceaf3.chunk.js": "/Elysian-Times/static/js/453.050ceaf3.chunk.js",
     "static/media/volume3.png": "/Elysian-Times/static/media/volume3.a3efd677d789a0d0c71a.png",
     "static/media/volume1.png": "/Elysian-Times/static/media/volume1.431f719eb3efab087a8c.png",
     "static/media/volume2.png": "/Elysian-Times/static/media/volume2.f9484b48012d62e31163.png",
     "static/media/meher.png": "/Elysian-Times/static/media/meher.78fda783d083f2aed68a.png",
+    "static/media/benazir.png": "/Elysian-Times/static/media/benazir.3db31ef9d345e612caed.png",
     "static/media/logodark.png": "/Elysian-Times/static/media/logodark.e412dfa52955afc48127.png",
     "static/media/logo.png": "/Elysian-Times/static/media/logo.cf79169fc7c4b3a34f82.png",
     "index.html": "/Elysian-Times/index.html",
-    "main.e06a9d04.js.map": "/Elysian-Times/static/js/main.e06a9d04.js.map",
+    "main.b0939166.js.map": "/Elysian-Times/static/js/main.b0939166.js.map",
     "453.050ceaf3.chunk.js.map": "/Elysian-Times/static/js/453.050ceaf3.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.e06a9d04.js"
+    "static/js/main.b0939166.js"
   ]
 }
