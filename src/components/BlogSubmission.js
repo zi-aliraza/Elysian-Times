@@ -1,39 +1,64 @@
 import React from 'react';
-import { Box, Button } from '@mui/material';
+import { Box, Typography, Button, Paper, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
-import CardGiftcardIcon from '@mui/icons-material/CardGiftcard'; // New gift icon
+import { Link as RouterLink } from 'react-router-dom'; // Import the link component
+import SendIcon from '@mui/icons-material/Send';
 
 const BlogSubmission = ({ animationsEnabled }) => {
-  const buttonAnimation = animationsEnabled ? {
-    whileHover: { scale: 1.05 },
-    whileTap: { scale: 0.95 },
-    transition: { type: 'spring', stiffness: 400, damping: 17 }
-  } : {};
-  
-  return (
-    // Top padding removed (my -> mb)
-    <Box sx={{ textAlign: 'center', mb: 6 }}>
-      <motion.div {...buttonAnimation}>
-        <Button
-          variant="contained"
-          size="large"
-          href="https://forms.gle/x6nQWvev1jSCHET56" // Updated Link
-          target="_blank"
-          rel="noopener noreferrer"
-          startIcon={<CardGiftcardIcon />} // Updated Icon
-          sx={{
-            borderRadius: '50px',
-            padding: '12px 32px',
-            fontWeight: 'bold',
-            textTransform: 'none',
-            fontSize: '1.1rem'
-          }}
-        >
-          Submit to Our Blog
-        </Button>
-      </motion.div>
-    </Box>
-  );
+    const theme = useTheme();
+
+    const containerVariant = animationsEnabled ? {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.3 } }
+    } : {};
+
+    const itemVariant = animationsEnabled ? {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+    } : {};
+
+    return (
+        <Box sx={{ py: 8, backgroundColor: 'action.hover' }}>
+            <Paper
+                component={motion.div}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.5 }}
+                variants={containerVariant}
+                elevation={0}
+                sx={{
+                    p: 4,
+                    maxWidth: 'md',
+                    margin: '0 auto',
+                    textAlign: 'center',
+                    backgroundColor: 'transparent'
+                }}
+            >
+                <motion.div variants={itemVariant}>
+                    <Typography variant="h4" component="h2" sx={{ fontFamily: "'Hello Paris', cursive", mb: 2 }}>
+                        Stay for a while— we saved you a page.
+                    </Typography>
+                </motion.div>
+                <motion.div variants={itemVariant}>
+                    <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                        We are always looking for passionate writers, artists, and creators. If you have an idea that fits our vision, we would love to hear from you.
+                    </Typography>
+                </motion.div>
+                <motion.div variants={itemVariant}>
+                    {/* CORRECTED: This button now uses RouterLink to navigate */}
+                    <Button
+                        variant="contained"
+                        size="large"
+                        endIcon={<SendIcon />}
+                        component={RouterLink}
+                        to="/submit"
+                    >
+                        Submit to Our Blog
+                    </Button>
+                </motion.div>
+            </Paper>
+        </Box>
+    );
 };
 
 export default BlogSubmission;

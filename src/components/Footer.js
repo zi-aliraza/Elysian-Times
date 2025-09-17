@@ -40,7 +40,8 @@ const Footer = ({ isTouchDevice }) => {
       sx={{
         py: 3,
         px: 2,
-        backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.2)',
+        // CHANGED: Background is now solid and uses the theme's paper color
+        backgroundColor: (theme) => theme.palette.background.paper,
         borderTop: '1px solid',
         borderColor: 'divider',
         position: 'relative',
@@ -143,11 +144,7 @@ const Footer = ({ isTouchDevice }) => {
           )}
         </Popover>
         
-        <Typography variant="body2" color="text.secondary" align="center" sx={{ pt: 3 }}>
-          {'© '}
-          {new Date().getFullYear()}
-          {' Elysian Times. All Rights Reserved.'}
-        </Typography>
+        {/* REMOVED: The copyright Typography component was here */}
       </Container>
     </Box>
   );

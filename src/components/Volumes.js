@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Container, Typography, Box, IconButton, Button, useTheme, useMediaQuery } from '@mui/material';
+import { Container, Typography, Box, IconButton, Button, useTheme, useMediaQuery, Skeleton } from '@mui/material'; // Added Skeleton
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowBackIosNew, ArrowForwardIos, Launch } from '@mui/icons-material';
 
@@ -13,17 +13,17 @@ const volumes = [
   {
     title: "Volume I",
     image: volume1Image,
-    link: "https://heyzine.com/flip-book/c304f7966d.html" // Placeholder link
+    link: "https://heyzine.com/flip-book/c304f7966d.html"
   },
   {
     title: "Volume II",
     image: volume2Image,
-    link: "https://heyzine.com/flip-book/44de753400.html" // Placeholder link
+    link: "https://heyzine.com/flip-book/44de753400.html"
   },
   {
     title: "Volume III",
     image: volume3Image,
-    link: "https://heyzine.com/flip-book/8b1d5483cc.html" // Placeholder link
+    link: "https://heyzine.com/flip-book/8b1d5483cc.html"
   }
 ];
 
@@ -52,15 +52,21 @@ const swipePower = (offset, velocity) => Math.abs(offset) * velocity;
 
 const Volumes = ({ animationsEnabled }) => {
   const [[page, direction], setPage] = useState([0, 0]);
+  // --- NEW: State to track if the current image is loading ---
+  const [isImageLoading, setIsImageLoading] = useState(true); 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // This ensures the index is always within the bounds of the array (0, 1, 2)
   const imageIndex = page < 0 ? (volumes.length - (Math.abs(page) % volumes.length)) % volumes.length : page % volumes.length;
 
   const paginate = useCallback((newDirection) => {
     setPage(prevPage => [prevPage[0] + newDirection, newDirection]);
   }, []);
+
+  // --- NEW: Effect to reset loading state whenever the slide changes ---
+  useEffect(() => {
+    setIsImageLoading(true);
+  }, [imageIndex]);
 
   // Effect for Keyboard Navigation
   useEffect(() => {
@@ -75,7 +81,7 @@ const Volumes = ({ animationsEnabled }) => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [paginate]); // This effect runs only once
+  }, [paginate]);
 
   const handleDragEnd = (e, { offset, velocity }) => {
     if (!animationsEnabled) return;
@@ -110,7 +116,6 @@ const Volumes = ({ animationsEnabled }) => {
         mt: 4,
       }}>
         
-        {/* Navigation Arrows */}
         <IconButton
           onClick={() => paginate(-1)}
           sx={{ 
@@ -121,7 +126,6 @@ const Volumes = ({ animationsEnabled }) => {
           <ArrowBackIosNew />
         </IconButton>
 
-        {/* Clipping Container for Carousel */}
         <Box sx={{
           position: 'relative',
           width: '100%',
@@ -152,18 +156,34 @@ const Volumes = ({ animationsEnabled }) => {
                 height: '100%',
               }}
             >
+              {/* --- NEW: Skeleton is rendered here, on top of the image container --- */}
+              <Skeleton
+                  variant="rectangular"
+                  sx={{
+                      width: '100%',
+                      height: '100%',
+                      position: 'absolute',
+                      opacity: isImageLoading ? 1 : 0, // Show only when loading
+                      transition: 'opacity 0.3s ease-in-out',
+                  }}
+              />
+              
               <Box
                 component="img"
                 src={volumes[imageIndex].image}
                 alt={volumes[imageIndex].title}
+                // --- NEW: onLoad event to set loading state to false ---
+                onLoad={() => setIsImageLoading(false)}
                 sx={{
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
                   boxShadow: 6,
-                  // FIX: These two lines prevent the image from being selected/dragged on mobile
                   pointerEvents: 'none',
                   userSelect: 'none',
+                  // --- NEW: The image is transparent until it loads ---
+                  opacity: isImageLoading ? 0 : 1,
+                  transition: 'opacity 0.3s ease-in-out',
                 }}
               />
             </motion.div>
@@ -181,7 +201,6 @@ const Volumes = ({ animationsEnabled }) => {
         </IconButton>
       </Box>
 
-      {/* Dynamic Info and Button Section */}
       <Box sx={{ 
         mt: 4, 
         minHeight: '100px',
@@ -195,13 +214,14 @@ const Volumes = ({ animationsEnabled }) => {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            {/* UPDATED: Font is now changed */}
             <Typography variant="h4" component="h3" sx={{ fontFamily: "'Hello Paris', cursive" }}>
               {volumes[imageIndex].title}
             </Typography>
             <Button 
               variant="contained" 
               href={volumes[imageIndex].link}
+              target="_blank" // Added to open link in a new tab
+              rel="noopener noreferrer" // Added for security
               endIcon={<Launch />}
               sx={{ mt: 1.5 }}
             >
@@ -211,7 +231,6 @@ const Volumes = ({ animationsEnabled }) => {
         </AnimatePresence>
       </Box>
 
-      {/* Responsive Helper Text */}
       <Typography variant="caption" sx={{ mt: 2, display: { xs: 'block', sm: 'none' } }}>
         Swipe to navigate
       </Typography>

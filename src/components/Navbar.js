@@ -1,195 +1,152 @@
 import React, { useState } from 'react';
-import {
-  AppBar, Toolbar, Typography, Button, IconButton, Box, Drawer, List, ListItem,
-  Divider, Switch, ListItemIcon, ListItemText, ListItemButton
-} from '@mui/material';
-import { NavLink } from 'react-router-dom';
-import { 
-  Settings, Menu as MenuIcon, WbSunny, NightsStay, 
-  Close as CloseIcon, AutoAwesome as AutoAwesomeIcon,
-  Brush as BrushIcon, GridView as GridViewIcon,
-  CardGiftcard as CardGiftcardIcon // Import the gift icon
-} from '@mui/icons-material';
-import { motion } from 'framer-motion';
+import { AppBar, Toolbar, Typography, Button, Box, IconButton, Drawer, List, ListItem, ListItemButton, ListItemText, Divider, useMediaQuery, useTheme, Popover, FormControlLabel, Switch, ListSubheader, alpha } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+import MenuIcon from '@mui/icons-material/Menu';
+import SettingsIcon from '@mui/icons-material/Settings';
 
-const navLinks = [
-  { title: 'Home', path: '/' },
-  { title: 'The Team', path: '/team' },
-  { title: 'Volumes', path: '/volumes' },
-  { title: 'FAQs', path: '/faq' },
+const navItems = [
+    { text: 'Home', path: '/' },
+    { text: 'Meet The Team', path: '/team' },
+    { text: 'Volumes', path: '/volumes' },
+    { text: 'FAQ', path: '/faq' },
 ];
 
-const jumpySpring = { type: 'spring', stiffness: 400, damping: 15 };
+const Navbar = ({ mode, setMode, animationsEnabled, setAnimationsEnabled, cursorEnabled, setCursorEnabled, backgroundEnabled, setBackgroundEnabled }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const [settingsAnchorEl, setSettingsAnchorEl] = useState(null);
 
-const Navbar = (props) => {
-  const { 
-    mode, setMode, animationsEnabled, setAnimationsEnabled,
-    cursorEnabled, setCursorEnabled, backgroundEnabled, setBackgroundEnabled
-  } = props;
-  
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+    const handleSettingsClick = (event) => {
+        setSettingsAnchorEl(event.currentTarget);
+    };
 
-  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
-  const handleSettingsToggle = () => setSettingsOpen(!settingsOpen);
+    const handleSettingsClose = () => {
+        setSettingsAnchorEl(null);
+    };
 
-  const drawerContent = (
-    <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center', mt: 2, display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="h6" sx={{ my: 2 }}>Elysian Times</Typography>
-        <Divider />
-        <List>
-          {navLinks.map((link) => (
-            <ListItem key={link.title} disablePadding>
-              <ListItemButton component={NavLink} to={link.path} sx={{ textAlign: 'center' }}>
-                <ListItemText primary={link.title} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Box>
-      
-      {/* ADDED BLOG SUBMISSION BUTTON AT THE BOTTOM OF THE DRAWER */}
-      <Box sx={{ p: 2 }}>
-        <Divider sx={{ mb: 2 }}/>
-        <Button
-          variant="contained"
-          fullWidth
-          href="https://forms.gle/x6nQWvev1jSCHET56"
-          target="_blank"
-          rel="noopener noreferrer"
-          startIcon={<CardGiftcardIcon />}
-        >
-          Submit to Blog
-        </Button>
-      </Box>
-    </Box>
-  );
+    const isSettingsOpen = Boolean(settingsAnchorEl);
 
-  const settingsListVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
+    const handleDrawerToggle = () => {
+        setDrawerOpen(!drawerOpen);
+    };
 
-  const settingsItemVariants = {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0, transition: jumpySpring }
-  };
+    const drawer = (
+         <Box 
+            onClick={handleDrawerToggle} 
+            sx={{ 
+                textAlign: 'center', 
+                width: 250, 
+                display: 'flex', 
+                flexDirection: 'column', 
+                height: '100%' 
+            }}
+         >
+            <Box>
+                <Typography variant="h6" sx={{ my: 2, fontFamily: "'Hello Paris', cursive" }}>
+                    Elysian Times
+                </Typography>
+                <Divider />
+                <List>
+                    {navItems.map((item) => (
+                        <ListItem key={item.text} disablePadding>
+                            <ListItemButton component={RouterLink} to={item.path}>
+                                <ListItemText primary={item.text} />
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
+                </List>
+            </Box>
+            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ p: 2 }}>
+                <Divider />
+                <Button component={RouterLink} to="/submit" variant="contained" fullWidth sx={{ mt: 1 }}>
+                    Submit to Blog
+                </Button>
+            </Box>
+        </Box>
+    );
 
-  const settingsContent = (
-    <Box sx={{ width: 280 }} role="presentation">
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 1 }}>
-        <Typography variant="h6" sx={{ pl: 1 }}>Settings</Typography>
-        <IconButton onClick={() => setSettingsOpen(false)}>
-          <CloseIcon />
-        </IconButton>
-      </Box>
-      <Divider />
-      <List component={motion.div} variants={settingsListVariants} initial="hidden" animate="visible">
-        <ListItem component={motion.div} variants={settingsItemVariants}>
-          <ListItemIcon>{mode === 'dark' ? <NightsStay /> : <WbSunny />}</ListItemIcon>
-          <ListItemText primary="Theme" />
-          <Switch edge="end" onChange={() => setMode(p => p === 'light' ? 'dark' : 'light')} checked={mode === 'dark'} />
-        </ListItem>
-        <ListItem component={motion.div} variants={settingsItemVariants}>
-          <ListItemIcon><AutoAwesomeIcon /></ListItemIcon>
-          <ListItemText primary="Animations" />
-          <Switch edge="end" onChange={() => setAnimationsEnabled(p => !p)} checked={animationsEnabled} />
-        </ListItem>
-        <ListItem component={motion.div} variants={settingsItemVariants}>
-          <ListItemIcon><BrushIcon /></ListItemIcon>
-          <ListItemText primary="Pen Cursor" />
-          <Switch edge="end" onChange={() => setCursorEnabled(p => !p)} checked={cursorEnabled} />
-        </ListItem>
-        <ListItem component={motion.div} variants={settingsItemVariants}>
-          <ListItemIcon><GridViewIcon /></ListItemIcon>
-          <ListItemText primary="Pattern" />
-          <Switch edge="end" onChange={() => setBackgroundEnabled(p => !p)} checked={backgroundEnabled} />
-        </ListItem>
-      </List>
-    </Box>
-  );
-
-  return (
-    <>
-      <AppBar
-        position="sticky"
-        elevation={0}
-        sx={{
-          background: 'transparent',
-          backdropFilter: 'saturate(180%) blur(10px)',
-        }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
-          >
-            <MenuIcon />
-          </IconButton>
-          
-          <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'baseline' }}>
-            <Typography variant="h6" component="div" sx={{ fontFamily: "'Hello Paris', cursive", fontSize: '1.8rem' }}>
-              Elysian
-            </Typography>
-            <Typography variant="h6" component="div" sx={{ fontFamily: "'Selima', cursive", fontSize: '1.6rem', ml: 0.5 }}>
-              Times
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
-            {navLinks.map((link) => (
-              <Button
-                key={link.title}
-                component={NavLink}
-                to={link.path}
+    return (
+        <>
+            <AppBar 
+                position="sticky" 
+                elevation={0}
                 sx={{ 
-                  color: 'text.primary',
-                  '&.active': { 
-                    color: 'primary.main',
-                    fontWeight: 'bold'
-                  } 
+                    top: 0, 
+                    // CORRECTED: The zIndex is now set to the standard AppBar level, which is lower than the Drawer.
+                    zIndex: (theme) => theme.zIndex.appBar,
+                    backgroundColor: alpha(theme.palette.background.default, 0.8),
+                    backdropFilter: 'blur(8px)',
+                    borderBottom: 1, 
+                    borderColor: 'divider'
                 }}
-              >
-                {link.title}
-              </Button>
-            ))}
-          </Box>
-          <IconButton color="inherit" onClick={handleSettingsToggle} sx={{ ml: 1 }}>
-            <Settings />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+            >
+                <Toolbar>
+                    <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="h6" component={RouterLink} to="/" sx={{ fontFamily: "'Hello Paris', cursive", textDecoration: 'none', color: 'inherit', fontSize: '1.8rem', mr: 3 }}>
+                            Elysian Times
+                        </Typography>
+                        {!isMobile && navItems.map((item) => (
+                            <Button key={item.text} component={RouterLink} to={item.path} color="inherit">
+                                {item.text}
+                            </Button>
+                        ))}
+                    </Box>
 
-      <Drawer
-        component={motion.div}
-        transition={jumpySpring}
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        ModalProps={{ keepMounted: true }}
-        sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-        }}
-      >
-        {drawerContent}
-      </Drawer>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        {!isMobile && (
+                            <Button 
+                                component={RouterLink} 
+                                to="/submit" 
+                                variant={mode === 'light' ? 'contained' : 'outlined'} 
+                                sx={{ mr: 1 }}
+                            >
+                                Submit to Our Blog
+                            </Button>
+                        )}
+                        <IconButton color="inherit" onClick={handleSettingsClick}>
+                            <SettingsIcon />
+                        </IconButton>
+                        {isMobile && (
+                            <IconButton color="inherit" edge="end" onClick={handleDrawerToggle}>
+                                <MenuIcon />
+                            </IconButton>
+                        )}
+                    </Box>
+                </Toolbar>
+            </AppBar>
 
-      <Drawer
-        component={motion.div}
-        transition={jumpySpring}
-        anchor="right"
-        open={settingsOpen}
-        onClose={handleSettingsToggle}
-      >
-        {settingsContent}
-      </Drawer>
-    </>
-  );
+            <Popover
+                open={isSettingsOpen}
+                anchorEl={settingsAnchorEl}
+                onClose={handleSettingsClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+                 <List sx={{ minWidth: 240 }}>
+                    <ListSubheader>Appearance</ListSubheader>
+                    <ListItem>
+                        <FormControlLabel control={<Switch checked={mode === 'dark'} onChange={() => setMode(mode === 'dark' ? 'light' : 'dark')} />} label="Dark Mode" />
+                    </ListItem>
+                     <ListItem>
+                        <FormControlLabel control={<Switch checked={backgroundEnabled} onChange={() => setBackgroundEnabled(!backgroundEnabled)} />} label="Show Background" />
+                    </ListItem>
+                    <ListSubheader>Experience</ListSubheader>
+                    <ListItem>
+                        <FormControlLabel control={<Switch checked={animationsEnabled} onChange={() => setAnimationsEnabled(!animationsEnabled)} />} label="Animations" />
+                    </ListItem>
+                     <ListItem>
+                        <FormControlLabel control={<Switch checked={cursorEnabled} onChange={() => setCursorEnabled(!cursorEnabled)} />} label="Custom Cursor" />
+                    </ListItem>
+                </List>
+            </Popover>
+
+            <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
+                {drawer}
+            </Drawer>
+        </>
+    );
 };
 
 export default Navbar;

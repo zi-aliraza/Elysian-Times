@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import BlogSubmission from './BlogSubmission';
 import DynamicCheckerboardBackground from './DynamicCheckerboardBackground';
 
+// REMOVED: No longer importing FloatingIcons
+// import FloatingIcons from './FloatingIcons'; 
+
 import logoImage from '../assets/logo.png';
 import logoDarkImage from '../assets/logodark.png';
 
@@ -12,15 +15,23 @@ const HomePage = ({ animationsEnabled, backgroundEnabled }) => {
   
   const currentLogo = theme.palette.mode === 'dark' ? logoImage : logoDarkImage;
   
-  const heroVariant = animationsEnabled ? {
+  const heroVariant = {
     hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 15 } },
-  } : {};
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: animationsEnabled ? { type: 'spring', stiffness: 100, damping: 15 } : { duration: 0 }
+    },
+  };
 
-  const contentVariant = animationsEnabled ? {
+  const contentVariant = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
-  } : {};
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: animationsEnabled ? { duration: 0.8, ease: 'easeOut' } : { duration: 0 }
+    },
+  };
 
   return (
     <Box>
@@ -33,7 +44,10 @@ const HomePage = ({ animationsEnabled, backgroundEnabled }) => {
         overflow: 'hidden',
         px: 2,
       }}>
-        {backgroundEnabled && <DynamicCheckerboardBackground animationsEnabled={animationsEnabled} />}
+        {/* REMOVED: The FloatingIcons component is no longer rendered here */}
+        {backgroundEnabled && (
+          <DynamicCheckerboardBackground animationsEnabled={animationsEnabled} />
+        )}
 
         <motion.div
           initial="hidden"
@@ -68,9 +82,6 @@ const HomePage = ({ animationsEnabled, backgroundEnabled }) => {
           </Typography>
           <Typography variant="body1" align="justify" paragraph>
             Submissions are always free and open to everyone, regardless of background or experience. We value voices from all walks of life and encourage writers, researchers, and creatives to join us in redefining what fashion writing can be.
-          </Typography>
-          <Typography variant="h5" align="center" sx={{ mt: 4, fontStyle: 'italic', fontWeight: 'medium' }}>
-            Stay for a while— we saved you a page.
           </Typography>
         </motion.div>
       </Container>
