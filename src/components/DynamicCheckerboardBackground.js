@@ -1,43 +1,80 @@
-import React from 'react';
-import { Box, useTheme } from '@mui/material';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTheme } from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const darkPalette = [
+  'rgba(62, 44, 82, 0.2)', 'rgba(73, 47, 100, 0.2)', 'rgba(85, 52, 116, 0.2)', 'rgba(48, 36, 64, 0.2)'
+];
+const lightPalette = [
+  'rgba(233, 216, 253, 0.4)', 'rgba(225, 204, 250, 0.4)', 'rgba(215, 192, 245, 0.4)'
+];
 
 const DynamicCheckerboardBackground = ({ animationsEnabled }) => {
   const theme = useTheme();
+  const [colors, setColors] = useState({
+    color1: 'rgba(0,0,0,0)',
+    color2: 'rgba(0,0,0,0)',
+  });
+  const debounceTimer = useRef(null);
+  
+  const randomizeColors = useCallback(() => {
+    const palette = theme.palette.mode === 'dark' ? darkPalette : lightPalette;
+    const newColor1 = palette[Math.floor(Math.random() * palette.length)];
+    let newColor2 = palette[Math.floor(Math.random() * palette.length)];
+    while (newColor1 === newColor2) {
+      newColor2 = palette[Math.floor(Math.random() * palette.length)];
+    }
+    setColors({ color1: newColor1, color2: newColor2 });
+  }, [theme.palette.mode]);
+  
+  useEffect(() => {
+    randomizeColors();
+  }, [randomizeColors]);
 
-  const darkColor1 = 'rgba(255, 255, 255, 0.04)';
-  const darkColor2 = 'rgba(255, 255, 255, 0.05)';
-  const lightColor1 = 'rgba(0, 0, 0, 0.05)';
-  const lightColor2 = 'rgba(0, 0, 0, 0.06)';
+  useEffect(() => {
+    if (!animationsEnabled) return;
+    
+    const handleScroll = () => {
+      clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(() => {
+        randomizeColors();
+      }, 200);
+    };
 
-  const color1 = theme.palette.mode === 'dark' ? darkColor1 : lightColor1;
-  const color2 = theme.palette.mode === 'dark' ? darkColor2 : lightColor2;
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(debounceTimer.current);
+    };
+  }, [animationsEnabled, randomizeColors]);
 
-  const bgVariant = animationsEnabled ? {
-      hidden: { opacity: 0 },
-      visible: { opacity: 1, transition: { duration: 1.5 } }
-  } : {};
+  const key = colors.color1 + colors.color2;
 
   return (
-    <Box
-      component={motion.div}
-      initial="hidden"
-      animate="visible"
-      variants={bgVariant}
-      sx={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        zIndex: -1,
-        background: `repeating-conic-gradient(${color1} 0% 25%, ${color2} 25% 50%) 50% 50% / 50px 50px`,
-        // UPDATED: The gradient now starts its fade much lower down the page.
-        // It is solid black (fully visible) until 85% of the way down,
-        // then fades to transparent between the 85% and 100% marks.
-        maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
-      }}
-    />
+    <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, overflow: 'hidden' }}>
+      <AnimatePresence>
+        <motion.div
+          key={key}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.5, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backgroundImage: `
+              repeating-conic-gradient(
+                from 0deg, 
+                ${colors.color1} 0deg 90deg, 
+                ${colors.color2} 90deg 180deg
+              )
+            `,
+            backgroundSize: '150px 150px',
+          }}
+        />
+      </AnimatePresence>
+    </div>
   );
 };
 

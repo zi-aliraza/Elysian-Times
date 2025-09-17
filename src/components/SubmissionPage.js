@@ -4,6 +4,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion'; 
 import AnimatedGradientBackground from './AnimatedGradientBackground';
 
 const links = {
@@ -11,7 +12,6 @@ const links = {
     Themed: "https://forms.gle/hr8GTUBWDFpV1AHR7"
 };
 
-// UPDATED: Accepting the backgroundEnabled prop
 const SubmissionPage = ({ animationsEnabled, backgroundEnabled }) => {
     const [category, setCategory] = useState('');
     const [agreed, setAgreed] = useState(false);
@@ -34,9 +34,18 @@ const SubmissionPage = ({ animationsEnabled, backgroundEnabled }) => {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    // CORRECTED: Replaced the "pop-in" animation with a simple fade
+    const pageVariants = animationsEnabled ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 }
+    } : {};
+
+    const pageTransition = { duration: 0.4, ease: "easeInOut" };
+
     return (
-        <>
-            {/* UPDATED: Conditionally rendering the background */}
+        // This motion.div now uses the simple fade animation
+        <motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}>
             {backgroundEnabled && <AnimatedGradientBackground />}
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 128px)', p: 2 }}>
                 <Paper 
@@ -113,7 +122,7 @@ const SubmissionPage = ({ animationsEnabled, backgroundEnabled }) => {
                     </Collapse>
                 </Paper>
             </Box>
-        </>
+        </motion.div>
     );
 };
 

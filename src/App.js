@@ -3,17 +3,16 @@ import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-d
 import { createTheme, ThemeProvider, CssBaseline, Box } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Import Gimmick Components
 import CustomCursor from './components/CustomCursor';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import SettingsTip from './components/SettingsTip';
+// REMOVED: No longer importing the background here
+// import DynamicCheckerboardBackground from './components/DynamicCheckerboardBackground'; 
 
-// Import Core Components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import LoadingAnimation from './components/LoadingAnimation';
 
-// Import Pages
 import HomePage from './components/HomePage';
 import MeetTheTeam from './components/MeetTheTeam';
 import Volumes from './components/Volumes';
@@ -33,10 +32,7 @@ const AppContent = () => {
     useEffect(() => {
         const appearTimer = setTimeout(() => { setShowTip(true); }, 3500);
         const disappearTimer = setTimeout(() => { setShowTip(false); }, 10000);
-        return () => {
-          clearTimeout(appearTimer);
-          clearTimeout(disappearTimer);
-        };
+        return () => { clearTimeout(appearTimer); clearTimeout(disappearTimer); };
     }, []);
 
     const theme = useMemo(() => createTheme({
@@ -45,26 +41,20 @@ const AppContent = () => {
             primary: { main: userColor },
             ...(mode === 'dark'
                 ? { background: { default: '#1a1a1a', paper: '#2a2a2a' }, text: { primary: '#f5eefc', secondary: '#bca6d4' } }
-                : { background: { default: '#f9f9f9', paper: '#fdfbff' }, text: { primary: '#3e2c52', secondary: '#6a4e8e' } }),
+                : { background: { default: '#f9f9f9', paper: '#ffffff' }, text: { primary: '#3e2c52', secondary: '#6a4e8e' } }),
         },
         typography: { fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif' },
     }), [mode, userColor]);
 
-    const pageVariants = animationsEnabled ? {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 }
-    } : { initial: {opacity: 1}, animate: {opacity: 1}, exit: {opacity: 1} };
-
-    const pageTransition = {
-        duration: 0.4,
-        ease: "easeInOut"
-    };
+    const pageVariants = { /* ... your variants ... */ };
+    const pageTransition = { duration: 0.4, ease: "easeInOut" };
     
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
+            {/* REMOVED: The global background component call is gone */}
             <CustomCursor cursorEnabled={cursorEnabled && animationsEnabled} />
+            {/* REMOVED: zIndex is no longer needed on this Box */}
             <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
                 <Navbar 
                     mode={mode} setMode={setMode} 
@@ -75,11 +65,11 @@ const AppContent = () => {
                 <Box component="main" sx={{ flexGrow: 1, position: 'relative' }}>
                     <AnimatePresence mode="wait">
                         <Routes location={location} key={location.pathname}>
-                            {/* UPDATED: Passing backgroundEnabled prop to all relevant pages */}
+                            {/* We still pass backgroundEnabled to HomePage so it can control its local background */}
                             <Route path="/" element={<motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}><HomePage animationsEnabled={animationsEnabled} backgroundEnabled={backgroundEnabled} /></motion.div>} />
-                            <Route path="/team" element={<motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}><MeetTheTeam animationsEnabled={animationsEnabled} backgroundEnabled={backgroundEnabled} /></motion.div>} />
+                            <Route path="/team" element={<motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}><MeetTheTeam animationsEnabled={animationsEnabled} /></motion.div>} />
                             <Route path="/volumes" element={<motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}><Volumes animationsEnabled={animationsEnabled} /></motion.div>} />
-                            <Route path="/faq" element={<motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}><FAQ animationsEnabled={animationsEnabled} backgroundEnabled={backgroundEnabled} /></motion.div>} />
+                            <Route path="/faq" element={<motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}><FAQ animationsEnabled={animationsEnabled} /></motion.div>} />
                             <Route path="/submit" element={<motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}><SubmissionPage animationsEnabled={animationsEnabled} backgroundEnabled={backgroundEnabled} /></motion.div>} />
                         </Routes>
                     </AnimatePresence>
@@ -95,8 +85,8 @@ const AppContent = () => {
 };
 
 function App() {
+  // ... your App component code remains the same
   const [isLoading, setIsLoading] = useState(true);
-
   return (
     <>
         <svg style={{ position: 'absolute', width: 0, height: 0 }}><defs><filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" /><feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" /><feBlend in="SourceGraphic" in2="goo" /></filter></defs></svg>

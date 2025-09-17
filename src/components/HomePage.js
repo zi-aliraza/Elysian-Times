@@ -1,11 +1,9 @@
 import React from 'react';
-import { Container, Typography, Box, useTheme } from '@mui/material';
+import { Container, Typography, Box, useTheme, Button } from '@mui/material';
 import { motion } from 'framer-motion';
-import BlogSubmission from './BlogSubmission';
+import { Link as RouterLink } from 'react-router-dom';
 import DynamicCheckerboardBackground from './DynamicCheckerboardBackground';
-
-// REMOVED: No longer importing FloatingIcons
-// import FloatingIcons from './FloatingIcons'; 
+import ArticleIcon from '@mui/icons-material/Article';
 
 import logoImage from '../assets/logo.png';
 import logoDarkImage from '../assets/logodark.png';
@@ -15,36 +13,23 @@ const HomePage = ({ animationsEnabled, backgroundEnabled }) => {
   
   const currentLogo = theme.palette.mode === 'dark' ? logoImage : logoDarkImage;
   
-  const heroVariant = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: animationsEnabled ? { type: 'spring', stiffness: 100, damping: 15 } : { duration: 0 }
-    },
-  };
-
-  const contentVariant = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0, 
-      transition: animationsEnabled ? { duration: 0.8, ease: 'easeOut' } : { duration: 0 }
-    },
-  };
+  const heroVariant = { /* ... your variants ... */ };
+  const contentVariant = { /* ... your variants ... */ };
+  const itemVariant = { /* ... your variants ... */ };
 
   return (
     <Box>
+      {/* SECTION 1: The Hero Box with the background */}
       <Box sx={{ 
         minHeight: '80vh', 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        position: 'relative',
+        position: 'relative', // This is crucial for containing the background
         overflow: 'hidden',
         px: 2,
       }}>
-        {/* REMOVED: The FloatingIcons component is no longer rendered here */}
+        {/* CORRECTED: The background is now placed INSIDE the hero section */}
         {backgroundEnabled && (
           <DynamicCheckerboardBackground animationsEnabled={animationsEnabled} />
         )}
@@ -67,26 +52,61 @@ const HomePage = ({ animationsEnabled, backgroundEnabled }) => {
         </motion.div>
       </Box>
 
-      <Container maxWidth="md" sx={{ py: 8 }}>
+      {/* SECTION 2: The Content Container on the default solid background */}
+      <Container maxWidth="md" sx={{ py: 8, textAlign: 'center' }}>
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.2 }}
           variants={contentVariant}
         >
-          <Typography variant="body1" align="justify" paragraph>
-            Elysian Times is an independent fashion magazine dedicated to exploring the intersections of fashion, culture, art, and identity. We believe fashion is more than just clothing. It’s a language, a reflection of society, and a form of self-expression.
-          </Typography>
-          <Typography variant="body1" align="justify" paragraph>
-            Our platform publishes articles, essays, and research papers that bring fresh perspectives and thoughtful dialogue to analysing the world of fashion. Whether you’re analyzing trends, uncovering cultural influences, or examining fashion’s role in shaping identity, we’re here for the ideas that push boundaries and start conversations.
-          </Typography>
-          <Typography variant="body1" align="justify" paragraph>
-            Submissions are always free and open to everyone, regardless of background or experience. We value voices from all walks of life and encourage writers, researchers, and creatives to join us in redefining what fashion writing can be.
-          </Typography>
+          <motion.div variants={itemVariant}>
+            <Typography variant="body1" align="justify" paragraph>
+              Elysian Times is an independent fashion magazine dedicated to exploring the intersections of fashion, culture, art, and identity. We believe fashion is more than just clothing. It’s a language, a reflection of society, and a form of self-expression.
+            </Typography>
+          </motion.div>
+          <motion.div variants={itemVariant}>
+            <Typography variant="body1" align="justify" paragraph>
+              Our platform publishes articles, essays, and research papers that bring fresh perspectives and thoughtful dialogue to analysing the world of fashion. Whether you’re analyzing trends, uncovering cultural influences, or examining fashion’s role in shaping identity, we’re here for the ideas that push boundaries and start conversations.
+            </Typography>
+          </motion.div>
+          <motion.div variants={itemVariant}>
+            <Typography variant="body1" align="justify" paragraph>
+              Submissions are always free and open to everyone, regardless of background or experience. We value voices from all walks of life and encourage writers, researchers, and creatives to join us in redefining what fashion writing can be.
+            </Typography>
+          </motion.div>
+          
+          <motion.div variants={itemVariant}>
+            <Typography variant="h5" align="center" sx={{ mt: 6, mb: 3, fontStyle: 'italic', fontWeight: 'medium' }}>
+              Stay for a while— we saved you a page.
+            </Typography>
+          </motion.div>
+          <motion.div variants={itemVariant}>
+            <Button
+              variant="contained"
+              size="large"
+              startIcon={<ArticleIcon />}
+              component={RouterLink}
+              to="/submit"
+              sx={{
+                borderRadius: '50px',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                fontSize: '1rem',
+                px: 4,
+                py: 1.5,
+                backgroundColor: '#d8b4fe',
+                color: '#3e2c52',
+                '&:hover': {
+                  backgroundColor: '#c084fc',
+                }
+              }}
+            >
+              Submit to Our Blog
+            </Button>
+          </motion.div>
         </motion.div>
       </Container>
-      
-      <BlogSubmission animationsEnabled={animationsEnabled} />
     </Box>
   );
 };

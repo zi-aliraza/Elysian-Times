@@ -1,7 +1,7 @@
 import React from 'react';
-import { Container, Typography, Accordion, AccordionSummary, AccordionDetails, Box } from '@mui/material';
+import { Container, Typography, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import DynamicCheckerboardBackground from './DynamicCheckerboardBackground';
+import { motion } from 'framer-motion';
 
 const faqData = [
     {
@@ -22,27 +22,27 @@ const faqData = [
     }
 ];
 
-// UPDATED: Accepting the backgroundEnabled prop
-const FAQ = ({ animationsEnabled, backgroundEnabled }) => {
+// CORRECTED: This component no longer needs the backgroundEnabled prop
+const FAQ = ({ animationsEnabled }) => {
+  const pageVariants = { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } };
+  const pageTransition = { duration: 0.4, ease: "easeInOut" };
+
   return (
-    <Box sx={{ position: 'relative', overflow: 'hidden', py: 8 }}>
-        {/* UPDATED: Conditionally rendering the background */}
-        {backgroundEnabled && <DynamicCheckerboardBackground animationsEnabled={animationsEnabled} />}
-        <Container maxWidth="md">
-            <Typography variant="h2" component="h1" gutterBottom textAlign="center" sx={{ fontFamily: '"Hello Paris", sans-serif', mb: 6 }}>
-                Frequently Asked Questions
-            </Typography>
-            {faqData.map((item, index) => (
-                <Accordion key={index} sx={{
-                  // Added a subtle background color to distinguish from the page background
-                  backgroundColor: 'action.hover'
-                }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}><Typography variant="h6">{item.question}</Typography></AccordionSummary>
-                    <AccordionDetails><Typography>{item.answer}</Typography></AccordionDetails>
-                </Accordion>
-            ))}
-        </Container>
-    </Box>
+    // The broken style has been removed from this wrapper
+    <motion.div initial="initial" animate="animate" exit="exit" variants={pageVariants} transition={pageTransition}>
+      {/* The background component is no longer rendered here */}
+      <Container maxWidth="md" sx={{ py: 8 }}>
+        <Typography variant="h2" component="h1" gutterBottom textAlign="center" sx={{ fontFamily: '"Hello Paris", sans-serif', mb: 6 }}>
+          Frequently Asked Questions
+        </Typography>
+        {faqData.map((item, index) => (
+          <Accordion key={index} sx={{ backgroundColor: 'action.hover' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}><Typography variant="h6">{item.question}</Typography></AccordionSummary>
+            <AccordionDetails><Typography>{item.answer}</Typography></AccordionDetails>
+          </Accordion>
+        ))}
+      </Container>
+    </motion.div>
   );
 };
 
